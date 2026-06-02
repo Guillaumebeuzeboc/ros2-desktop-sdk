@@ -3,13 +3,7 @@ name: Build SDK
 on:
   pull_request:
     branches:
-      - jazzy
-      - humble
       - lyrical
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
-  cancel-in-progress: true
 
 jobs:
   build:
