@@ -23,6 +23,14 @@ fi
 " >> "${HOME}/.profile"
 fi
 
+# Export QT_QPA_PLATFORM
+if ! grep -q "QT_QPA_PLATFORM" "${HOME}/.profile"; then
+  echo "
+# Set Qt platform to xcb
+export QT_QPA_PLATFORM=xcb
+" >> "${HOME}/.profile"
+fi
+
 # Configure colcon's default dirs
 mkdir -p "${_WORKSHOP_COLCON_CONFIG_BASE_PATH}"
 
