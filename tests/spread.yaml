@@ -8,6 +8,8 @@ backends:
       - ubuntu-24.04:
           username: ubuntu
           vm: true
+          storage: 50G
+          memory: 16G
 
 suites:
   main/:

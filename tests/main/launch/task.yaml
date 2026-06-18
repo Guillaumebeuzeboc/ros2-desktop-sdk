@@ -5,6 +5,7 @@ prepare: |
   workshop launch
 
 restore: |
+  workshop stop || true
   workshop remove || true
 
 execute: |

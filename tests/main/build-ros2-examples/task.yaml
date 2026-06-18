@@ -11,6 +11,7 @@ prepare: |
   workshop -p ${PROJECT} launch
 
 restore: |
+  workshop -p ${PROJECT} stop || true
   workshop -p ${PROJECT} remove || true
   rm -rf ${PROJECT}
 
