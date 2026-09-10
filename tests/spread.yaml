@@ -2,6 +2,11 @@ project: ros2-desktop
 
 path: /home/ubuntu/project
 
+# The ros2-desktop SDK installs ros-*-desktop-full (~2GB of packages),
+# which exceeds spread's default 15m kill-timeout.
+warn-timeout: 10m
+kill-timeout: 45m
+
 backends:
   lxd:
     systems:
