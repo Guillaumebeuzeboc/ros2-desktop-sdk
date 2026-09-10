@@ -48,9 +48,14 @@ platforms:
     build-for: [arm64]
 
 parts:
-  ros2-part:
+  ros2-config:
     plugin: dump
     source: config
+  ros2-scripts:
+    plugin: dump
+    source: scripts
+    organize:
+      "*": bin/ros2-desktop-sdk/
 
 plugs:
   ros-cache:

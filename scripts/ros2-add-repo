@@ -1,0 +1,42 @@
+#!/bin/bash
+
+set -euo pipefail
+
+usage() {
+  echo "Usage: ros2-add-repo <git-url> [branch]" >&2
+}
+
+if (( $# < 1 || $# > 2 )); then
+  usage
+  exit 2
+fi
+
+url=$1
+branch=${2:-}
+repo_name=${url%/}
+repo_name=${repo_name##*/}
+repo_name=${repo_name%.git}
+
+if [[ -z "${repo_name}" || "${repo_name}" == "." || "${repo_name}" == ".." ]]; then
+  echo "error: cannot derive a repository name from ${url}" >&2
+  exit 1
+fi
+
+repo_dir="/project/${repo_name}"
+
+if [[ -e "${repo_dir}" ]]; then
+  echo "error: ${repo_dir} already exists" >&2
+  exit 1
+fi
+
+if [[ -n "${branch}" ]]; then
+  git clone --branch "${branch}" "${url}" "${repo_dir}"
+else
+  git clone "${url}" "${repo_dir}"
+fi
+
+rosdep install --default-yes --ignore-packages-from-source \
+  --rosdistro="${ROS_DISTRO:-lyrical}" \
+  --from-paths "${repo_dir}"
+
+echo "Added ${repo_name}"

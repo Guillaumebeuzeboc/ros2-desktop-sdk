@@ -58,6 +58,11 @@ eatmydata apt-get -y install \
 eatmydata apt-get -y install \
   ros-${_WORKSHOP_ROS_DISTRO}-desktop-full
 
+# Make the SDK's helper scripts available to login shells and workshop exec.
+cat <<EOF >/etc/profile.d/ros2-desktop.sh
+export PATH="${SDK}/bin/ros2-desktop-sdk:\$PATH"
+EOF
+
 # Initialise rosdep
 if [ ! -f "/etc/ros/rosdep/sources.list.d/20-default.list" ]; then
   rosdep init

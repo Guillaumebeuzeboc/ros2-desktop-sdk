@@ -1,0 +1,17 @@
+#!/bin/bash
+
+set -euo pipefail
+
+read -r -p "Package name: " package_name
+
+if [[ ! "${package_name}" =~ ^[a-z][a-z0-9_]*$ ]]; then
+  echo "error: package name must start with a lowercase letter and contain only lowercase letters, digits, or underscores" >&2
+  exit 1
+fi
+
+package_dir="/project/${package_name}"
+
+cd "/project"
+ros2 pkg create --build-type ament_cmake "${package_name}"
+
+echo "Created ${package_dir}"

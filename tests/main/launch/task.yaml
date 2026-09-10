@@ -13,6 +13,12 @@ execute: |
   # prepare, the workshop is fully provisioned with our SDK applied. As a
   # belt-and-braces sanity check, prove the workshop is interactable.
   workshop exec -- true
+  workshop exec -- bash -lc 'command -v ros2-new-pkg'
+  workshop exec -- bash -lc 'command -v ros2-add-interfaces'
+  workshop exec -- bash -lc 'command -v ros2-build'
+  workshop exec -- bash -lc 'command -v ros2-build-debug'
+  workshop exec -- bash -lc 'command -v ros2-add-repo'
+  workshop exec -- bash -lc 'command -v ros2-clean'
 
 debug: |
   workshop tasks

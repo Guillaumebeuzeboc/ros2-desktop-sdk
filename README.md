@@ -57,6 +57,26 @@ colcon build
 Build artefacts are stored in `~/workspace/` inside the workshop, mapped to
 your host via the `colcon-artefacts` mount plug.
 
+### Helper scripts
+
+The SDK ships these commands for common workspace operations:
+
+| Command | Purpose |
+| --- | --- |
+| `ros2-new-pkg` | Prompt for a package name and create an `ament_cmake` package in `~/workspace/src`. |
+| `ros2-add-interfaces` | Prompt for a package and add the tutorial `Sphere.msg` and `AddThreeInts.srv` interfaces. |
+| `ros2-build` | Build with the `release`, `ccache`, and `lld` mixins. |
+| `ros2-build-debug` | Build with the `debug`, `ccache`, and `lld` mixins. |
+| `ros2-add-repo <URL> [BRANCH]` | Clone a repository into `~/workspace/src` and install its dependencies with `rosdep`. |
+| `ros2-clean` | Clean the colcon workspace. |
+
+Run them directly from a workshop shell, or invoke them from the host through
+Workshop, for example:
+
+```bash
+workshop exec -- ros2-build --packages-select my_package
+```
+
 To see where the build artifacts are stored on the host:
 
 ```bash

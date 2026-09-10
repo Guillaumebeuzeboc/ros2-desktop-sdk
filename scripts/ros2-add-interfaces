@@ -1,0 +1,71 @@
+#!/bin/bash
+
+set -euo pipefail
+
+read -r -p "Package name: " package_name
+
+if [[ ! "${package_name}" =~ ^[a-z][a-z0-9_]*$ ]]; then
+  echo "error: invalid ROS 2 package name" >&2
+  exit 1
+fi
+
+package_dir="/project/${package_name}"
+cmake_file="${package_dir}/CMakeLists.txt"
+package_file="${package_dir}/package.xml"
+
+if [[ ! -f "${cmake_file}" || ! -f "${package_file}" ]]; then
+  echo "error: ${package_dir} is not an ament_cmake package" >&2
+  exit 1
+fi
+
+if [[ -e "${package_dir}/msg/Sphere.msg" || -e "${package_dir}/srv/AddThreeInts.srv" ]]; then
+  echo "error: Sphere.msg or AddThreeInts.srv already exists in ${package_dir}" >&2
+  exit 1
+fi
+
+if grep -q 'rosidl_generate_interfaces' "${cmake_file}"; then
+  echo "error: ${cmake_file} already configures ROS interfaces; add the tutorial files manually" >&2
+fi
+
+mkdir -p "${package_dir}/msg" "${package_dir}/srv"
+
+cat >"${package_dir}/msg/Sphere.msg" <<'EOF'
+geometry_msgs/Point center
+float64 radius
+EOF
+
+cat >"${package_dir}/srv/AddThreeInts.srv" <<'EOF'
+int64 a
+int64 b
+int64 c
+---
+int64 sum
+EOF
+
+if ! grep -q '<depend>geometry_msgs</depend>' "${package_file}"; then
+  sed -i '/<\/package>/i\  <depend>geometry_msgs</depend>' "${package_file}"
+fi
+if ! grep -q '<build_depend>rosidl_default_generators</build_depend>' "${package_file}"; then
+  sed -i '/<\/package>/i\  <build_depend>rosidl_default_generators</build_depend>' "${package_file}"
+fi
+if ! grep -q '<exec_depend>rosidl_default_runtime</exec_depend>' "${package_file}"; then
+  sed -i '/<\/package>/i\  <exec_depend>rosidl_default_runtime</exec_depend>' "${package_file}"
+fi
+if ! grep -q '<member_of_group>rosidl_interface_packages</member_of_group>' "${package_file}"; then
+  sed -i '/<\/package>/i\  <member_of_group>rosidl_interface_packages</member_of_group>' "${package_file}"
+fi
+
+# ${PROJECT_NAME} must remain literal in the generated CMake file.
+# shellcheck disable=SC2016
+sed -i '/ament_package()/i\find_package(geometry_msgs REQUIRED)\
+find_package(rosidl_default_generators REQUIRED)\
+\
+rosidl_generate_interfaces(${PROJECT_NAME}\
+  "msg/Sphere.msg"\
+  "srv/AddThreeInts.srv"\
+  DEPENDENCIES geometry_msgs\
+)\
+' "${cmake_file}"
+
+echo "Added the tutorial interfaces to ${package_dir}"
+echo "Edit msg/Sphere.msg, srv/AddThreeInts.srv, CMakeLists.txt, and package.xml for your project."
